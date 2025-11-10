@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'http://localhost:5000/api';
+// co the de api o day, hoac call truc tiep luon tuy` theo nhu cau`

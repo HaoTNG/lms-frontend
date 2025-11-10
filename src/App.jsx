@@ -1,16 +1,17 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
-import AdminPage from './pages/AdminPage'
-import TutorPage from './pages/TutorPage'
-import MenteePage from './pages/MenteePage'
-import UserPage from './pages/UserPage'
+import AdminPage from './pages/admin/AdminPage'
+import TutorPage from './pages/tutor/TutorPage'
+import MenteePage from './pages/mentee/MenteePage'
+import UserPage from './pages/user/UserPage'
+import AppRoutes from './routes/AppRoutes'
 
 function App() {
   return (
-    <div className="text-center text-3xl font-bold text-red-600">
-      Tailwind is working! 
-    </div>
+    <React.StrictMode>
+      <AppRoutes />
+    </React.StrictMode>
   )
 }
 

@@ -97,6 +97,18 @@ export const adminAPI = {
       method: 'GET',
     })
   },
+  getCourseById: async (id) => {
+    return apiCall(`/admin/courses/${id}`, {
+      method: 'GET',
+    })
+  },
+
+  updateCourse: async (id, payload) => {
+    return apiCall(`/admin/courses/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    })
+  },
 
   createCourse: async (courseData) => {
     return apiCall('/admin/courses', {

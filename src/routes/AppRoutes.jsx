@@ -10,7 +10,7 @@ import LoginPage from '../pages/auth/LoginPage'
 import RegisterPage from '../pages/auth/RegisterPage'
 import MainLayout from '../layouts/MainLayout'
 import ProtectedRoute from '../components/ProtectedRoute'
-
+import CourseDetail from '../pages/admin/CourseDetail'
 const AppRoutes = () => {
   console.log('[AppRoutes] Rendering...')
   
@@ -21,6 +21,7 @@ const AppRoutes = () => {
           {/* Auth Routes - Công khai */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/admin/courses/:id" element={<CourseDetail />} />
 
           {/* Protected Routes - Yêu cầu đăng nhập */}
           <Route

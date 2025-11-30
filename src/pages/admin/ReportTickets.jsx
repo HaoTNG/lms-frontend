@@ -12,16 +12,17 @@ export default function ReportTickets() {
   const [selectedTicket, setSelectedTicket] = useState(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [totalElements, setTotalElements] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
   // Form state
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    ticketStatus: 'OPEN',
+    status: 'PENDING',
   })
 
   const [responseData, setResponseData] = useState({
-    status: 'OPEN',
+    status: 'PENDING',
     adminResponse: '',
   })
 
@@ -34,14 +35,16 @@ export default function ReportTickets() {
     setError(null)
     try {
       const response = await adminAPI.getReportTickets(page, pageSize)
-      let filteredTickets = response.data || []
+      const paginationData = response.pagination || {}
+      let filteredTickets = paginationData.content || []
       
       if (statusFilter) {
-        filteredTickets = filteredTickets.filter(t => t.ticketStatus === statusFilter)
+        filteredTickets = filteredTickets.filter(t => t.status === statusFilter)
       }
       
       setTickets(filteredTickets)
-      setTotalElements(filteredTickets.length)
+      setTotalElements(paginationData.totalItems || 0)
+      setTotalPages(paginationData.totalPages || 0)
     } catch (err) {
       setError('Lỗi tải danh sách vé: ' + err.message)
       console.error(err)
@@ -58,9 +61,9 @@ export default function ReportTickets() {
     }
 
     try {
-      await adminAPI.createReportTicket(formData.title, formData.description, formData.ticketStatus)
+      await adminAPI.createReportTicket(formData.title, formData.description, formData.status)
       setError(null)
-      setFormData({ title: '', description: '', ticketStatus: 'OPEN' })
+      setFormData({ title: '', description: '', status: 'PENDING' })
       setShowCreateForm(false)
       loadTickets()
     } catch (err) {
@@ -87,14 +90,12 @@ export default function ReportTickets() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'OPEN':
-        return 'bg-red-500'
-      case 'IN_PROGRESS':
+      case 'PENDING':
         return 'bg-yellow-500'
-      case 'RESOLVED':
+      case 'APPROVED':
         return 'bg-green-500'
-      case 'CLOSED':
-        return 'bg-gray-500'
+      case 'REJECTED':
+        return 'bg-red-500'
       default:
         return 'bg-blue-500'
     }
@@ -103,8 +104,6 @@ export default function ReportTickets() {
   if (loading && tickets.length === 0) {
     return <LoadingSpinner />
   }
-
-  const totalPages = Math.ceil(totalElements / pageSize)
 
   return (
     <div className="space-y-6">
@@ -154,14 +153,13 @@ export default function ReportTickets() {
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <select
-                value={formData.ticketStatus}
-                onChange={(e) => setFormData({...formData, ticketStatus: e.target.value})}
+                value={formData.status}
+                onChange={(e) => setFormData({...formData, status: e.target.value})}
                 className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               >
-                <option value="OPEN">Mở (OPEN)</option>
-                <option value="IN_PROGRESS">Đang xử lý (IN_PROGRESS)</option>
-                <option value="RESOLVED">Đã giải quyết (RESOLVED)</option>
-                <option value="CLOSED">Đóng (CLOSED)</option>
+                <option value="PENDING">Chờ xử lý (PENDING)</option>
+                <option value="APPROVED">Được phê duyệt (APPROVED)</option>
+                <option value="REJECTED">Bị từ chối (REJECTED)</option>
               </select>
             </div>
             <button
@@ -185,10 +183,9 @@ export default function ReportTickets() {
           className="w-full md:w-48 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
         >
           <option value="">Tất cả trạng thái</option>
-          <option value="OPEN">Mở (OPEN)</option>
-          <option value="IN_PROGRESS">Đang xử lý (IN_PROGRESS)</option>
-          <option value="RESOLVED">Đã giải quyết (RESOLVED)</option>
-          <option value="CLOSED">Đóng (CLOSED)</option>
+          <option value="PENDING">Chờ xử lý (PENDING)</option>
+          <option value="APPROVED">Được phê duyệt (APPROVED)</option>
+          <option value="REJECTED">Bị từ chối (REJECTED)</option>
         </select>
       </div>
 
@@ -206,8 +203,8 @@ export default function ReportTickets() {
                   <h3 className="text-xl font-bold text-gray-800">{ticket.title}</h3>
                   <p className="text-gray-600 text-sm mt-1">ID: #{ticket.id}</p>
                 </div>
-                <span className={`${getStatusColor(ticket.ticketStatus)} text-white px-4 py-2 rounded-full font-bold text-sm`}>
-                  {ticket.ticketStatus}
+                <span className={`${getStatusColor(ticket.status)} text-white px-4 py-2 rounded-full font-bold text-sm`}>
+                  {ticket.status}
                 </span>
               </div>
 
@@ -228,10 +225,9 @@ export default function ReportTickets() {
                     onChange={(e) => setResponseData({...responseData, status: e.target.value})}
                     className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   >
-                    <option value="OPEN">Mở (OPEN)</option>
-                    <option value="IN_PROGRESS">Đang xử lý (IN_PROGRESS)</option>
-                    <option value="RESOLVED">Đã giải quyết (RESOLVED)</option>
-                    <option value="CLOSED">Đóng (CLOSED)</option>
+                    <option value="PENDING">Chờ xử lý (PENDING)</option>
+                    <option value="APPROVED">Được phê duyệt (APPROVED)</option>
+                    <option value="REJECTED">Bị từ chối (REJECTED)</option>
                   </select>
                   <textarea
                     placeholder="Phản hồi của Admin (không bắt buộc)"
@@ -249,7 +245,7 @@ export default function ReportTickets() {
                     <button
                       onClick={() => {
                         setSelectedTicket(null)
-                        setResponseData({ status: 'OPEN', adminResponse: '' })
+                        setResponseData({ status: 'PENDING', adminResponse: '' })
                       }}
                       className="flex-1 bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded-lg font-bold transition"
                     >
@@ -261,7 +257,7 @@ export default function ReportTickets() {
                 <button
                   onClick={() => {
                     setSelectedTicket(ticket.id)
-                    setResponseData({ status: ticket.ticketStatus, adminResponse: ticket.adminResponse || '' })
+                    setResponseData({ status: ticket.status, adminResponse: ticket.adminResponse || '' })
                   }}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition"
                 >

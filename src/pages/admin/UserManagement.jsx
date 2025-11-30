@@ -12,6 +12,7 @@ export default function UserManagement() {
   const [roleFilter, setRoleFilter] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [totalElements, setTotalElements] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -30,8 +31,10 @@ export default function UserManagement() {
     setError(null)
     try {
       const response = await adminAPI.getUsers(page, pageSize, search, roleFilter)
-      setUsers(response.data || [])
-      setTotalElements(response.totalElements || 0)
+      const paginationData = response.pagination || {}
+      setUsers(paginationData.content || [])
+      setTotalElements(paginationData.totalItems || 0)
+      setTotalPages(paginationData.totalPages || 0)
     } catch (err) {
       setError('Lỗi tải danh sách người dùng: ' + err.message)
       console.error(err)
@@ -72,8 +75,6 @@ export default function UserManagement() {
     setRoleFilter(e.target.value)
     setPage(0)
   }
-
-  const totalPages = Math.ceil(totalElements / pageSize)
 
   if (loading && users.length === 0) {
     return <LoadingSpinner />

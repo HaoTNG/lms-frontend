@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { adminAPI } from '../../services/api'
+import {  adminAPI } from '../../services/api'
 import LoadingSpinner from '../../components/LoadingSpinner'
 
 export default function Announcements() {
@@ -11,6 +11,7 @@ export default function Announcements() {
   const [recipientFilter, setRecipientFilter] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [totalElements, setTotalElements] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -29,8 +30,10 @@ export default function Announcements() {
     setError(null)
     try {
       const response = await adminAPI.getAnnouncements(page, pageSize, recipientFilter)
-      setAnnouncements(response.data || [])
-      setTotalElements(response.totalElements || 0)
+      const paginationData = response.pagination || {}
+      setAnnouncements(paginationData.content || [])
+      setTotalElements(paginationData.totalItems || 0)
+      setTotalPages(paginationData.totalPages || 0)
     } catch (err) {
       setError('Lỗi tải danh sách thông báo: ' + err.message)
       console.error(err)
@@ -53,7 +56,7 @@ export default function Announcements() {
         await adminAPI.sendAnnouncementToMentee(formData.title, formData.content)
       } else if (formData.recipient === 'TUTOR') {
         await adminAPI.sendAnnouncementToTutor(formData.title, formData.content)
-      } else if (formData.recipient === 'USER' && formData.userId) {
+      } else if (formData.recipient === 'SPECIFIC' && formData.userId) {
         await adminAPI.sendAnnouncementToUser(formData.userId, formData.title, formData.content)
       }
 
@@ -88,7 +91,7 @@ export default function Announcements() {
         return '📚 Học viên'
       case 'TUTOR':
         return '🎓 Hướng dẫn viên'
-      case 'USER':
+      case 'SPECIFIC':
         return '👤 Người dùng'
       default:
         return recipient
@@ -98,8 +101,6 @@ export default function Announcements() {
   if (loading && announcements.length === 0) {
     return <LoadingSpinner />
   }
-
-  const totalPages = Math.ceil(totalElements / pageSize)
 
   return (
     <div className="space-y-6">
@@ -141,7 +142,7 @@ export default function Announcements() {
                 <option value="ALL">👥 Gửi tới tất cả</option>
                 <option value="MENTEE">📚 Gửi tới học viên</option>
                 <option value="TUTOR">🎓 Gửi tới hướng dẫn viên</option>
-                <option value="USER">👤 Gửi tới người dùng cụ thể</option>
+                <option value="SPECIFIC">👤 Gửi tới người dùng cụ thể</option>
               </select>
               
               {formData.recipient === 'USER' && (
@@ -197,7 +198,7 @@ export default function Announcements() {
           <option value="ALL">Gửi tới tất cả</option>
           <option value="MENTEE">Gửi tới học viên</option>
           <option value="TUTOR">Gửi tới hướng dẫn viên</option>
-          <option value="USER">Gửi tới người dùng cụ thể</option>
+          <option value="SPECIFIC">Gửi tới người dùng cụ thể</option>
         </select>
       </div>
 

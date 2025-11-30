@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../../services/api'
 import LoadingSpinner from '../../components/LoadingSpinner'
+import { useNavigate } from 'react-router-dom'
+
+
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState([])
@@ -13,13 +16,15 @@ export default function CourseManagement() {
   const [searchCourse, setSearchCourse] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [totalElements, setTotalElements] = useState(0)
+  const [totalPages, setTotalPages] = useState(0)
 
+  const navigate = useNavigate()
   // Form state
   const [formData, setFormData] = useState({
     courseName: '',
     description: '',
     tutor: '',
-    status: 'ACTIVE',
+    status: 'OPEN',
     maxStudents: 30,
   })
 
@@ -32,8 +37,10 @@ export default function CourseManagement() {
     setError(null)
     try {
       const response = await adminAPI.getCourses(page, pageSize, tutorFilter, statusFilter, searchCourse)
-      setCourses(response.data || [])
-      setTotalElements(response.totalElements || 0)
+      const paginationData = response.pagination || {}
+      setCourses(paginationData.content || [])
+      setTotalElements(paginationData.totalItems || 0)
+      setTotalPages(paginationData.totalPages || 0)
     } catch (err) {
       setError('Lỗi tải danh sách khóa học: ' + err.message)
       console.error(err)
@@ -48,7 +55,7 @@ export default function CourseManagement() {
       setError('Vui lòng điền tên khóa học và tên hướng dẫn viên')
       return
     }
-
+ô
     try {
       await adminAPI.createCourse(formData)
       setError(null)
@@ -56,7 +63,7 @@ export default function CourseManagement() {
         courseName: '',
         description: '',
         tutor: '',
-        status: 'ACTIVE',
+        status: 'OPEN',
         maxStudents: 30,
       })
       setShowCreateForm(false)
@@ -70,8 +77,6 @@ export default function CourseManagement() {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
-
-  const totalPages = Math.ceil(totalElements / pageSize)
 
   if (loading && courses.length === 0) {
     return <LoadingSpinner />
@@ -140,9 +145,9 @@ export default function CourseManagement() {
                 onChange={handleFormChange}
                 className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
               >
-                <option value="ACTIVE">Đang hoạt động (ACTIVE)</option>
-                <option value="INACTIVE">Tạm dừng (INACTIVE)</option>
-                <option value="COMPLETED">Hoàn thành (COMPLETED)</option>
+                <option value="OPEN">Đang hoạt động (OPEN)</option>
+                <option value="PENDING">Tạm dừng (PENDING)</option>
+        
               </select>
               <input
                 type="number"
@@ -196,9 +201,8 @@ export default function CourseManagement() {
             className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
           >
             <option value="">Tất cả trạng thái</option>
-            <option value="ACTIVE">Đang hoạt động</option>
-            <option value="INACTIVE">Tạm dừng</option>
-            <option value="COMPLETED">Hoàn thành</option>
+            <option value="OPEN">Đang hoạt động</option>
+            <option value="END">Hoàn thành</option>
           </select>
         </div>
       </div>
@@ -224,21 +228,24 @@ export default function CourseManagement() {
               </tr>
             ) : (
               courses.map((course, index) => (
-                <tr key={course.id} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                  <td className="px-6 py-3 text-gray-800">{course.id}</td>
+                <tr key={course.courseId} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                  <td className="px-6 py-3 text-gray-800">{course.courseId}</td>
                   <td className="px-6 py-3 text-gray-800 font-medium">{course.courseName}</td>
-                  <td className="px-6 py-3 text-gray-600">{course.tutor}</td>
+                  <td className="px-6 py-3 text-gray-600">{course.tutorName}</td>
                   <td className="px-6 py-3">
                     <span className={`px-3 py-1 rounded-full text-sm font-bold text-white ${
-                      course.status === 'ACTIVE' ? 'bg-green-500' :
-                      course.status === 'INACTIVE' ? 'bg-yellow-500' :
-                      'bg-gray-500'
+                      course.courseStatus === 'OPEN' ? 'bg-green-500' :
+                      course.courseStatus === 'END' ? 'bg-gray-500' :
+                      'bg-blue-500'
                     }`}>
-                      {course.status}
+                      {course.courseStatus}
                     </span>
                   </td>
                   <td className="px-6 py-3 text-center">
-                    <button className="text-blue-600 hover:text-blue-800 font-medium">
+                    <button
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                      onClick={() => navigate(`/admin/courses/${course.courseId}`)}
+                    >
                       ✏️ Chi tiết
                     </button>
                   </td>

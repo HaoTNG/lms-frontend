@@ -4,6 +4,7 @@ import CourseManagement from './CourseManagement'
 import ReportTickets from './ReportTickets'
 import Announcements from './Announcements'
 import Analytics from './Analytics'
+import { adminAPI } from '../../services/api'
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -59,11 +60,13 @@ function DashboardOverview() {
     const loadStats = async () => {
       try {
         // Load some basic stats - có thể mở rộng thêm
+        const response = await adminAPI.getSystemAnalytics()
+        
         setStats({
-          totalUsers: 0,
-          totalCourses: 0,
-          openTickets: 0,
-          recentAnnouncements: 0,
+          totalUsers: response.data.totalUsers,
+          totalCourses: response.data.totalCourses,
+          totalMentees: response.data.totalMentees,
+          totalTutors: response.data.totalTutors,
         })
       } catch (err) {
         console.error('Error loading stats:', err)
@@ -94,14 +97,14 @@ function DashboardOverview() {
         color="green"
       />
       <StatCard
-        title="Vé báo cáo mở"
-        value={stats?.openTickets || 0}
+        title="Tổng sinh viên"
+        value={stats?.totalMentees || 0}
         icon="🎫"
         color="orange"
       />
       <StatCard
-        title="Thông báo gần đây"
-        value={stats?.recentAnnouncements || 0}
+        title="Tổng giảng viên"
+        value={stats?.totalTutors || 0}
         icon="📢"
         color="purple"
       />

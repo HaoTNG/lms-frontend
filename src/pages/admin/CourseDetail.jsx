@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { adminAPI } from "../../services/api";
 import LoadingSpinner from "../../components/LoadingSpinner";
-
 export default function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -90,7 +89,7 @@ export default function CourseDetail() {
     <div className="space-y-6">
 
       <button
-        onClick={() => navigate("/admin/courses")}
+        onClick={() => navigate("/admin")}
         className="px-4 py-2 bg-gray-300 hover:bg-gray-400 rounded"
       >
         ← Quay lại
@@ -114,7 +113,7 @@ export default function CourseDetail() {
         <p><strong>Mô tả:</strong> {course.description}</p>
         <p><strong>Trạng thái:</strong> {course.courseStatus}</p>
         <p><strong>Số mentee tối đa:</strong> {course.maxMentee ?? "Không có"}</p>
-        <p><strong>Gia sư:</strong> {course.tutorName} (ID: {course.tutorId})</p>
+        <p><strong>Giảng viên:</strong> {course.tutorName} (ID: {course.tutorId})</p>
         <p><strong>Subject Registration ID:</strong> {course.subjectRegistrationId}</p>
         <p><strong>Ngày tạo:</strong> {course.createdDate}</p>
       </div>

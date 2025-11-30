@@ -83,7 +83,7 @@ export const adminAPI = {
       method: 'GET',
     })
   },
-
+  
   // Course Management
   getCourses: async (page = 0, size = 10, tutor = '', status = '', course_name = '') => {
     const params = new URLSearchParams()
@@ -97,6 +97,13 @@ export const adminAPI = {
       method: 'GET',
     })
   },
+
+  getUserById: async (id) => {
+    return apiCall(`/admin/get-user/${id}`, {
+      method: 'GET',
+    })
+  },
+
   getCourseById: async (id) => {
     return apiCall(`/admin/courses/${id}`, {
       method: 'GET',

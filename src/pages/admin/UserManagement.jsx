@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { adminAPI } from '../../services/api'
 import LoadingSpinner from '../../components/LoadingSpinner'
-
+import { useNavigate } from 'react-router-dom'
 export default function UserManagement() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
@@ -13,7 +13,7 @@ export default function UserManagement() {
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [totalElements, setTotalElements] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
-
+  const navigate = useNavigate()
   // Form state
   const [formData, setFormData] = useState({
     name: '',
@@ -225,9 +225,13 @@ export default function UserManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-3 text-center">
-                    <button className="text-blue-600 hover:text-blue-800 font-medium">
+                    <button
+                      onClick={() => navigate(`/admin/users/${user.id}`)}
+                      className="text-blue-600 hover:text-blue-800 font-medium"
+                    >
                       ✏️ Chi tiết
                     </button>
+
                   </td>
                 </tr>
               ))

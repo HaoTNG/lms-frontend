@@ -1,0 +1,16 @@
+{
+  "models": [
+    {
+      "title": "Qwen Coder 7B",
+      "provider": "ollama",
+      "model": "qwen2.5-coder:7b",
+      "role": "default"
+    },
+    {
+      "title": "Qwen Coder 1.5B",
+      "provider": "ollama",
+      "model": "qwen2.5-coder:1.5b",
+      "role": "autocomplete"
+    }
+  ]
+}

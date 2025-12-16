@@ -48,7 +48,7 @@ export default function RegisteredCoursesPage() {
   return (
     <div className="max-w-6xl mx-auto px-6 py-6">
       <h1 className="text-xl md:text-2xl font-semibold text-[#004196] mb-4">
-        Danh sách môn học đã đăng ký
+        Danh sách môn học đăng ký đã được phê duyệt
       </h1>
 
       {error && (
@@ -106,16 +106,7 @@ export default function RegisteredCoursesPage() {
         </table>
 
         <div className="flex justify-center items-center py-3 text-xs gap-1">
-          {[1, 2, 3].map((p) => (
-            <button
-              key={p}
-              className={`w-6 h-6 rounded-sm border ${
-                p === 1 ? "bg-[#0b6fe0] text-white" : "bg-white text-gray-700"
-              }`}
-            >
-              {p}
-            </button>
-          ))}
+          
         </div>
       </div>
 

@@ -54,7 +54,7 @@ export default function CancelRegistrationPage() {
       setToCancel(null);
       setError("Hủy đăng ký thành công");
       // Auto-reload page after 2 seconds
-      setTimeout(() => window.location.reload(), 2000);
+      //setTimeout(() => window.location.reload(), 2000);
     } catch (err) {
       setError("Lỗi hủy đăng ký: " + err.message);
     } finally {

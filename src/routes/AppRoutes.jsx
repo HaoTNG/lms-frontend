@@ -81,23 +81,72 @@ const AppRoutes = () => {
           {/* ================== ADMIN (AdminLayout + navbar riêng) ================== */}
           <Route path="/admin" element={<AdminLayout />}>
             {/* /admin  → trang phân tích / tổng quan */}
-            <Route index element={<AdminPage />} />
+            <Route 
+              index 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]} allowedPrefix="/admin">
+                  <AdminPage />
+                </ProtectedRoute>
+              } 
+            />
 
             {/* /admin/users  → Quản lý người dùng */}
-            <Route path="users" element={<UserManagement />} />
+            <Route 
+              path="users" 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]} allowedPrefix="/admin">
+                  <UserManagement />
+                </ProtectedRoute>
+              } 
+            />
             {/* /admin/users/:id  → Chi tiết user */}
-            <Route path="users/:id" element={<UserDetail />} />
+            <Route 
+              path="users/:id" 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]} allowedPrefix="/admin">
+                  <UserDetail />
+                </ProtectedRoute>
+              } 
+            />
 
             {/* /admin/courses  → Quản lý khóa học */}
-            <Route path="courses" element={<CourseManagement />} />
+            <Route 
+              path="courses" 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]} allowedPrefix="/admin">
+                  <CourseManagement />
+                </ProtectedRoute>
+              } 
+            />
             {/* /admin/courses/:id  → Chi tiết khóa học */}
-            <Route path="courses/:id" element={<CourseDetail />} />
+            <Route 
+              path="courses/:id" 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]} allowedPrefix="/admin">
+                  <CourseDetail />
+                </ProtectedRoute>
+              } 
+            />
 
             {/* /admin/feedback  → Quản lý phản hồi / vé báo cáo */}
-            <Route path="feedback" element={<ReportTickets />} />
+            <Route 
+              path="feedback" 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]} allowedPrefix="/admin">
+                  <ReportTickets />
+                </ProtectedRoute>
+              } 
+            />
 
             {/* /admin/notifications  → Gởi thông báo */}
-            <Route path="notifications" element={<Announcements />} />
+            <Route 
+              path="notifications" 
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]} allowedPrefix="/admin">
+                  <Announcements />
+                </ProtectedRoute>
+              } 
+            />
           </Route>
 
           {/* ================== MENTEE + USER (MainLayout) ================== */}

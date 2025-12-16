@@ -103,7 +103,7 @@ export default function RegisterCoursesPage() {
       await loadEnrolledCourses();
       setShowSuccess(true);
       // Auto-reload page after 2 seconds
-      setTimeout(() => window.location.reload(), 2000);
+      //setTimeout(() => window.location.reload(), 2000);
     } catch (err) {
       setError("Lỗi đăng ký khóa học: " + err.message);
     } finally {
@@ -120,7 +120,7 @@ export default function RegisterCoursesPage() {
       await loadEnrolledCourses();
       setError("Hủy đăng ký thành công");
       // Auto-reload page after 2 seconds
-      setTimeout(() => window.location.reload(), 2000);
+      //setTimeout(() => window.location.reload(), 2000);
     } catch (err) {
       setError("Lỗi hủy đăng ký: " + err.message);
     } finally {
